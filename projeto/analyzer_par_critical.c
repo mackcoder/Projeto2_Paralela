@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
             char *end = strstr(start, " HTTP");
             if (end) {
                 size_t len = end - start;
-                strncpy(url, start, len);
+                strcpy(url, start, len);
                 url[len] = '\0';
 
                 CacheNode* node = ht_get(ht, url); [cite: 129]

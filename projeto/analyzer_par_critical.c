@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     if (argc < 2) return printf("Uso: %s <log_file>\n", argv[0]), 1;
 
     // Construção a partir do manifest 
-    HashTable* ht = ht_create(131071); [cite: 137]
+    HashTable* ht = ht_create(131071);
     FILE* f_man = fopen("manifest.txt", "r");
     char line[1024];
     while (fgets(line, sizeof(line), f_man)) {
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
                 strncpy(url, start, len);
                 url[len] = '\0';
 
-                CacheNode* node = ht_get(ht, url); [cite: 129]
+                CacheNode* node = ht_get(ht, url);
                 if (node) {
                     #pragma omp critical
                     {
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
     }
     free(log_entries);
 
-    ht_save_results(ht, "results.csv"); [cite: 323]
+    ht_save_results(ht, "results.csv");
     ht_destroy(ht);
     return 0;
 }

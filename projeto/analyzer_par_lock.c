@@ -4,7 +4,7 @@
 #include <string.h>
 #include "hash_table.h"
 
-#define MAX_LOGS_LINES 10000000
+#define MAX_LOG_LINES 10000000
 #define BUCKET_SIZE 1024
 
 /*
@@ -26,7 +26,7 @@ int main(int argc, char** argv){
     }
 
     if(!f_man){
-        perror(stderr, "Erro no acesso -> 'manifest.txt'\n");
+        perror("Erro no acesso -> 'manifest.txt'\n");
         ht_destroy(ht);
         return 1;
     }
@@ -37,12 +37,13 @@ int main(int argc, char** argv){
         ht_put(ht, line);
     }
     fclose(f_man);
+
     // Carregar log em memória para permitir parallel for
-    char** log_entries = malloc(MAX_LOGS_LINES * sizeof(char*));
+    char** log_entries = malloc(MAX_LOG_LINES * sizeof(char*));
     FILE* f_log = fopen(argv[1], "r");
     int total_lines = 0;
 
-    while (fgets(line, sizeof(line), f_log) && total_lines < MAX_LOGS_LINES) {
+    while (fgets(line, sizeof(line), f_log) && total_lines < MAX_LOG_LINES) {
         log_entries[total_lines++] = strdup(line); // Duplica a string na memória
     }
     fclose(f_log);
@@ -66,24 +67,24 @@ int main(int argc, char** argv){
                 char url[512];
 
                 size_t len = end - start;
-                strcpy(url, start, len);
+                strncpy(url, start, len);
                 url[len] = '\0';
 
                 CacheNode* node = ht_get(ht, url);
 
-                omp_lock_t* locks = malloc(sizeof(omp_lock_t) * ht -> size);
-                size_t bucket = hash_function(url) % ht-> size;
+                size_t bucket = hash_djb2(url, ht-> size);
 
                 omp_set_lock(&locks[bucket]);
                 node -> hit_count++;
                 omp_unset_lock(&locks[bucket]);
+                
             }
         }
         free(log_entries[x]);
     }
 
     for(int destroyer = 0; destroyer < ht -> size; destroyer++){
-        omp_destroy_lcok(&locks[destroyer]);
+        omp_destroy_lock(&locks[destroyer]);
     }
     
     free(locks);

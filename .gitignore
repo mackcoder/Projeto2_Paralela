@@ -1,5 +1,6 @@
 *.txt
 *.csv
 *.zip
-analyzer_seq
-analyzer_par_*
+
+*.out
+/logs

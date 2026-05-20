@@ -15,13 +15,6 @@ TARGET_LCK = analyzer_par_lock
 TARGET_PAD = analyzer_par_atomic_padded
 TARGET_EXT = .out
 
-TARGETS = \
-	$(TARGET_SEQ)$(TARGET_EXT) \
-	$(TARGET_ATM)$(TARGET_EXT) \
-	$(TARGET_CRT)$(TARGET_EXT) \
-	$(TARGET_LCK)$(TARGET_EXT) \
-	$(TARGET_PAD)$(TARGET_EXT)
-
 # Alvo principal: compila todos os executáveis
 all:
 	$(CC) $(CFLAGS) $(SRC_SEQ) $(SRC_INCLUDE) -o $(TARGET_SEQ)$(TARGET_EXT)

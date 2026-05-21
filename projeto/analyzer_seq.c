@@ -3,6 +3,12 @@
 #include <string.h>
 #include "hash_table.h"
 
+/*
+- Andre Doerner Duarte - 10427938
+- Matheus Leonardo Cardoso Kroeff - 10426434
+- Naoto Ushizaki - 10437445
+*/
+
 int main(int argc, char** argv) {
     // Valida se o usuário passou o arquivo de log como argumento na linha de comando
     // Exemplo de uso: ./programa arquivo_de_log.txt

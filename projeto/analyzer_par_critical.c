@@ -4,6 +4,12 @@
 #include <string.h>
 #include "hash_table.h"
 
+/*
+- Andre Doerner Duarte - 10427938
+- Matheus Leonardo Cardoso Kroeff - 10426434
+- Naoto Ushizaki - 10437445
+*/
+
 #define MAX_LOG_LINES 10000000 // Limite máximo de linhas para evitar estouro de memória
 
 int main(int argc, char** argv) {

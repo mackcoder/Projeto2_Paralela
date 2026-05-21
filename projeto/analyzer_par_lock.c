@@ -13,6 +13,19 @@
 - Naoto Ushizaki - 10437445
 */
 
+// Função de hash local (mesma lógica do djb2)
+static size_t local_hash(const char* str, size_t size) {
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c
+    }
+
+    return hash % size;
+}
+
+
 int main(int argc, char** argv){
     if (argc < 2) return printf("Uso: %s <log_file>\n", argv[0]), 1;
 
@@ -26,7 +39,7 @@ int main(int argc, char** argv){
     }
 
     if(!f_man){
-        perror("Erro no acesso -> 'manifest.txt'\n");
+        perror("Erro no acesso -> 'manifest.txt'");
         ht_destroy(ht);
         return 1;
     }
@@ -52,7 +65,7 @@ int main(int argc, char** argv){
 
     omp_lock_t* locks = malloc(sizeof(omp_lock_t) * ht -> size);
     for(size_t s = 0; s < ht -> size; s++){
-        omp_set_lock(&locks[s]);
+        omp_init_lock(&locks[s]);
     }
 
     #pragma omp parallel for
@@ -65,25 +78,27 @@ int main(int argc, char** argv){
             char * end = strstr(start, " HTTP");
             if(end){
                 char url[512];
-
-                size_t len = end - start;
-                strncpy(url, start, len);
-                url[len] = '\0';
-
-                CacheNode* node = ht_get(ht, url);
-
-                size_t bucket = hash_djb2(url, ht-> size);
-
-                omp_set_lock(&locks[bucket]);
-                node -> hit_count++;
-                omp_unset_lock(&locks[bucket]);
                 
+                size_t len = end - start;
+                if(len < sizeof(url)){
+                    strncpy(url, start, len);
+                    url[len] = '\0';
+
+                    CacheNode* node = ht_get(ht, url);
+
+                    size_t bucket = local_hash(url, ht-> size);
+                    if(node){
+                        omp_set_lock(&locks[bucket]);
+                        node -> hit_count++;
+                        omp_unset_lock(&locks[bucket]);
+                    }
+                }
             }
         }
         free(log_entries[x]);
     }
 
-    for(int destroyer = 0; destroyer < ht -> size; destroyer++){
+    for(int destroyer = 0; (long unsigned) destroyer < ht->size; destroyer++){
         omp_destroy_lock(&locks[destroyer]);
     }
     

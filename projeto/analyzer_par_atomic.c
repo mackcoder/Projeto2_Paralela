@@ -7,6 +7,11 @@
 #define MAX_LOG_LINES 10000000
 #define BUCKET_SIZE 1024
 
+/*
+- Andre Doerner Duarte - 10427938
+- Matheus Leonardo Cardoso Kroeff - 10426434
+- Naoto Ushizaki - 10437445
+*/
 
 int main(int argc, char** argv){
     // Valida se o arquivo de log foi passado como argumento na linha de comando

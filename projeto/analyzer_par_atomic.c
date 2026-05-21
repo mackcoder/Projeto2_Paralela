@@ -5,7 +5,6 @@
 #include "hash_table.h"
 
 #define MAX_LOG_LINES 10000000
-#define BUCKET_SIZE 1024
 
 /*
 - Andre Doerner Duarte - 10427938
